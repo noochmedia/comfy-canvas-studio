@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ReloadIcon } from '@radix-ui/react-icons';
-import { Sparkles, Wand2, Magic, AlertCircle } from 'lucide-react';
+import { Sparkles, Wand2, Wand, AlertCircle } from 'lucide-react';
 
 interface PromptInputProps {
   onPromptChange: (prompt: string) => void;
@@ -74,7 +74,7 @@ const PromptInput: React.FC<PromptInputProps> = ({
                   size="sm"
                   className="flex gap-1 items-center"
                 >
-                  <Magic className="h-3 w-3" />
+                  <Wand className="h-3 w-3" />
                   <span>Enhance</span>
                 </Button>
                 

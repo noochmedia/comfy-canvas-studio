@@ -6,11 +6,9 @@ import GenerationControls from './GenerationControls';
 import OutputGallery from './OutputGallery';
 import { GenerationParams, GenerationResult } from '@/types';
 import { generateImages, mockModels } from '@/utils/api';
-import { useToast } from 'sonner';
+import { toast } from 'sonner';
 
 const TextToImagePanel = () => {
-  const toast = useToast();
-  
   const [isGenerating, setIsGenerating] = useState(false);
   const [prompt, setPrompt] = useState('A beautiful landscape with snow-capped mountains, a serene lake, and pine trees under a dramatic sky');
   const [negativePrompt, setNegativePrompt] = useState('blurry, low quality, distortion, poorly drawn, ugly, bad anatomy');
