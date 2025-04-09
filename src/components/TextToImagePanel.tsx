@@ -7,9 +7,10 @@ import OutputGallery from './OutputGallery';
 import { GenerationParams, GenerationResult } from '@/types';
 import { generateImages, mockModels } from '@/utils/api';
 import { toast } from 'sonner';
+import { useAppContext } from '@/context/AppContext';
 
 const TextToImagePanel = () => {
-  const [isGenerating, setIsGenerating] = useState(false);
+  const { setIsGenerating } = useAppContext();
   const [prompt, setPrompt] = useState('A beautiful landscape with snow-capped mountains, a serene lake, and pine trees under a dramatic sky');
   const [negativePrompt, setNegativePrompt] = useState('blurry, low quality, distortion, poorly drawn, ugly, bad anatomy');
   const [result, setResult] = useState<GenerationResult | null>(null);
@@ -28,8 +29,11 @@ const TextToImagePanel = () => {
     batchCount: 1,
   });
   
+  const [isGenerating, setIsGeneratingLocal] = useState(false);
+  
   const handleGenerate = async () => {
     try {
+      setIsGeneratingLocal(true);
       setIsGenerating(true);
       
       // Update params with current prompt
@@ -50,6 +54,7 @@ const TextToImagePanel = () => {
       console.error('Generation failed:', error);
       toast.error('Failed to generate images');
     } finally {
+      setIsGeneratingLocal(false);
       setIsGenerating(false);
     }
   };

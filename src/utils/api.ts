@@ -1,12 +1,12 @@
 
-import { GenerationParams, GenerationResult } from '@/types';
+import { GenerationParams, GenerationResult, Model, ModelType } from '@/types';
 
 // Mock model data
-export const mockModels = [
+export const mockModels: Model[] = [
   {
     id: 'model1',
     name: 'Stable Diffusion XL',
-    type: 'checkpoint',
+    type: 'checkpoint' as ModelType,
     preview: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2064&auto=format&fit=crop&ixlib=rb-4.0.3',
     description: 'State-of-the-art text to image model with enhanced detail and composition',
     isFavorite: true
@@ -14,7 +14,7 @@ export const mockModels = [
   {
     id: 'model2',
     name: 'Stable Diffusion 1.5',
-    type: 'checkpoint',
+    type: 'checkpoint' as ModelType,
     preview: 'https://images.unsplash.com/photo-1633168846771-8a00384e9def?q=80&w=2160&auto=format&fit=crop&ixlib=rb-4.0.3',
     description: 'Reliable text to image model with good general capabilities',
     isFavorite: false
@@ -22,7 +22,7 @@ export const mockModels = [
   {
     id: 'model3',
     name: 'Dreamshaper',
-    type: 'checkpoint',
+    type: 'checkpoint' as ModelType,
     preview: 'https://images.unsplash.com/photo-1549244433-a82b2117f247?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3',
     description: 'Creative model focused on artistic and dreamlike imagery',
     isFavorite: false
@@ -30,7 +30,7 @@ export const mockModels = [
   {
     id: 'lora1',
     name: 'Realistic Vision',
-    type: 'lora',
+    type: 'lora' as ModelType,
     preview: 'https://images.unsplash.com/photo-1603048588665-711bd5aec2d7?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3',
     description: 'LoRA for enhancing photorealism in generated images',
     isFavorite: true
@@ -38,7 +38,7 @@ export const mockModels = [
   {
     id: 'lora2',
     name: 'AnimeFigure LoRA',
-    type: 'lora',
+    type: 'lora' as ModelType,
     preview: 'https://images.unsplash.com/photo-1560448075-bb485b067938?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3',
     description: 'Specialized in creating anime figure aesthetics',
     isFavorite: false
@@ -77,9 +77,37 @@ export async function generateImages(params: GenerationParams): Promise<Generati
   };
 }
 
-// Mock server status check
+// Server status check with actual connection to ComfyUI server
 export async function checkServerStatus(url: string): Promise<boolean> {
-  // In a real app, this would make an actual API call
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return true;
+  try {
+    console.log(`Checking ComfyUI server status at: ${url}`);
+    
+    // Try to connect to the ComfyUI server
+    // In a real implementation, this would:
+    // 1. Make a GET request to serverUrl/system_stats
+    // 2. Check if the response is valid
+    
+    // For demo, we're simulating a server check
+    const response = await fetch(`${url}/system_stats`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+      // Adding a cache busting parameter
+      signal: AbortSignal.timeout(5000), // 5s timeout
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Server responded with status: ${response.status}`);
+    }
+    
+    // Check if the response is valid JSON
+    await response.json();
+    
+    return true;
+  } catch (error) {
+    console.error('Error checking server status:', error);
+    // Re-throw with a more user-friendly message
+    throw new Error(`Could not connect to ComfyUI server at ${url}`);
+  }
 }

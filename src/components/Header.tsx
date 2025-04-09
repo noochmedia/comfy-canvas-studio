@@ -1,13 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppContext } from '@/context/AppContext';
 import { GenerationType } from '@/types';
 import { Moon, Sun, Settings, RefreshCcw } from 'lucide-react';
+import SettingsDialog from './SettingsDialog';
 
 const Header = () => {
   const { state, setGenerationType, toggleDarkMode, connectToServer } = useAppContext();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   
   const generationTypes: { value: GenerationType; label: string }[] = [
     { value: 'text-to-image', label: 'Text to Image' },
@@ -56,6 +58,7 @@ const Header = () => {
             variant="ghost" 
             size="icon"
             title="Settings"
+            onClick={() => setSettingsOpen(true)}
           >
             <Settings className="h-5 w-5" />
           </Button>
@@ -81,6 +84,9 @@ const Header = () => {
           </TabsList>
         </Tabs>
       </div>
+      
+      {/* Settings Dialog */}
+      <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </header>
   );
 };

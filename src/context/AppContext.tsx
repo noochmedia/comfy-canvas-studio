@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AppState, GenerationType, Model } from '@/types';
 import { toast } from 'sonner';
+import { checkServerStatus } from '@/utils/api';
 
 interface AppContextType {
   state: AppState;
@@ -27,8 +28,22 @@ const initialState: AppState = {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+// Get stored server URL from localStorage
+const getStoredServerUrl = (): string => {
+  try {
+    const storedUrl = localStorage.getItem('comfyui-server-url');
+    return storedUrl || initialState.serverUrl;
+  } catch (e) {
+    console.error('Error reading localStorage:', e);
+    return initialState.serverUrl;
+  }
+};
+
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AppState>(initialState);
+  const [state, setState] = useState<AppState>({
+    ...initialState,
+    serverUrl: getStoredServerUrl(),
+  });
   const [recentModels, setRecentModels] = useState<Model[]>([]);
   const [favoriteModels, setFavoriteModels] = useState<Model[]>([]);
 
@@ -45,7 +60,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Try to connect to server on startup
   useEffect(() => {
     connectToServer();
-  }, [state.serverUrl]);
+  }, []);
 
   const toggleDarkMode = () => {
     setState(prev => {
@@ -64,6 +79,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const setServerUrl = (serverUrl: string) => {
+    try {
+      // Store the URL in localStorage
+      localStorage.setItem('comfyui-server-url', serverUrl);
+    } catch (e) {
+      console.error('Error writing to localStorage:', e);
+    }
+    
     setState(prev => ({ ...prev, serverUrl }));
   };
 
@@ -71,9 +93,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, isConnected: false, connectionError: undefined }));
     
     try {
-      // In a real app, we'd actually try to connect to the ComfyUI server
-      // For this demo, we'll simulate a successful connection
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Use the checkServerStatus function from api.ts
+      await checkServerStatus(state.serverUrl);
       
       setState(prev => ({ ...prev, isConnected: true }));
       toast.success('Connected to ComfyUI server');
